@@ -33,3 +33,20 @@ for i, appName in ipairs(appList) do
         toggleApp(appName)
     end)
 end
+
+local function openEmacsEverywhere()
+  -- IMPORTANT: Replace '/usr/local/bin/emacsclient' with the output of `which emacsclient`
+  -- Common paths: 
+  --   Intel Mac: /usr/local/bin/emacsclient
+  --   Apple Silicon: /opt/homebrew/bin/emacsclient
+  --   Emacs Plus/Mac Port: /Applications/Emacs.app/Contents/MacOS/bin/emacsclient
+  
+  local output, status, type, rc = hs.execute("/usr/local/bin/emacsclient --eval '(emacs-everywhere)'")
+
+  if not status then
+    hs.alert.show("Error: Could not connect to Emacs server")
+  end
+end
+
+-- Example Binding: Hyper + E
+hs.hotkey.bind({"cmd", "option"}, "e", openEmacsEverywhere)
