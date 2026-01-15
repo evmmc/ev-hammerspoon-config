@@ -17,16 +17,6 @@ function listAllApps()
     end
 end
 
--- Empty Trash instantly, system-wide
-hs.hotkey.bind({ "cmd", "option", "ctrl" }, "delete", function()
-    hs.osascript.applescript([[
-        tell application "Finder"
-            empty the trash without asking
-        end tell
-    ]])
-    hs.notify.new({ title = "Hammerspoon", informativeText = "Trash Emptied Instantly" }):send()
-end)
-
 -- Show the name of the active application while switching
 hs.application.watcher.new(function(appName, eventType, app)
     if eventType == hs.application.watcher.activated then
