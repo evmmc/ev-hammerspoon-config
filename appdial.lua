@@ -20,11 +20,10 @@ end
 
 local appList = {
     "Emacs",
-    "Google Chrome",
+    "Google Chrome Canary",
     "Finder",
     "Tiny Player",
-    "Skim",
-    "Notes",
+    "Skim"
 }
 
 for i, appName in ipairs(appList) do

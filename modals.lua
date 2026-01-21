@@ -28,16 +28,18 @@ local bindings = {
         end
     },
     {
+        key = "n",
+        desc = "Banish Notifications",
+        fn = function()
+            masterModal:exit()
+            hs.execute("killall NotificationCenter")
+        end
+    },
+    {
         key = "t",
         desc = "Empty Trash Instantly",
         fn = function()
-            -- masterModal:exit() -- Optional: stay in modal? Usage implied usually exit.
-            -- Original code didn't exit for 't' but 'h' and 's' did.
-            -- Wait, original 't' did NOT exit.
-            -- I will keep original behavior: 't' stays in modal (maybe?) or I should unify.
-            -- Looking at original code:
-            -- h -> exit, s -> exit, t -> NO exit.
-            -- I will preserve that behavior.
+            -- masterModal:exit() -- Keeping your original logic (no exit) for Trash
             hs.osascript.applescript([[
                 tell application "Finder"
                     empty the trash without asking
@@ -54,24 +56,17 @@ local function getHelpText()
     for _, b in ipairs(bindings) do
         text = text .. string.upper(b.key) .. ": " .. b.desc .. "\n"
     end
-    -- Add 'u' itself to help?
+    -- Add 'u' explicitly to help text
     text = text .. "U: Show Usage"
     return text
 end
 
--- Bind the 'u' usage key separately or add to table?
--- If I add to table, it shows up in help automatically.
--- But 'u' self-referencing might be cleaner if manual or just added to table.
--- Let's add 'u' to the table for completeness.
+-- Add 'u' (Usage) to the bindings table
 table.insert(bindings, {
     key = "u",
     desc = "Show Usage",
     fn = function()
-        -- Show alert, don't exit modal immediately so user can read it?
-        -- Or exit? Usually help is momentary.
-        -- User said "triggered by modal 'u' which shows usage"
-        -- Let's use hs.alert.show which is nice overlay.
-        -- And keep modal open so they can then press the key they wanted.
+        -- Show alert, keeping modal open so user can press the next key
         hs.alert.show(getHelpText(), 4)
     end
 })
