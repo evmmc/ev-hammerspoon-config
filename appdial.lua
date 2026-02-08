@@ -20,7 +20,9 @@ end
 
 local appList = {
     "Emacs",
-    "Google Chrome Canary",
+    "Google Chrome",
+    "Ghostty",
+    "FL Studio",
     "Finder",
     "Tiny Player",
     "Skim"

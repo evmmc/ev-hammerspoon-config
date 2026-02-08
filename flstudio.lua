@@ -1,11 +1,43 @@
 -- flstudio.lua
 local flstudio = {}
 
+-- view patterns
+function view_patterns()
+    local app = hs.appfinder.appFromName("FL Studio")
+    if app then
+        -- Tries to select Patterns -> Move up
+        if not app:selectMenuItem({ "View", "Patterns" }) then
+            hs.alert.show('oops')
+        end
+    end
+end
+
+-- view fx in use
+function view_fx_in_use()
+    local app = hs.appfinder.appFromName("FL Studio")
+    if app then
+        -- Tries to select Patterns -> Move up
+        if not app:selectMenuItem({ "View", "Effects in use" }) then
+            hs.alert.show('oops')
+        end
+    end
+end
+
+-- view generators in use
+function view_gen_in_use()
+    local app = hs.appfinder.appFromName("FL Studio")
+    if app then
+        -- Tries to select Patterns -> Move up
+        if not app:selectMenuItem({ "View", "Generators in use" }) then
+            hs.alert.show('oops')
+        end
+    end
+end
+
 -- Move the current Pattern UP via the Menu
 function fl_move_pattern_up()
     local app = hs.appfinder.appFromName("FL Studio")
     if app then
-        -- Tries to select Patterns -> Move up
         if not app:selectMenuItem({ "Patterns", "Move up" }) then
             hs.alert.show("Unable to find 'Patterns > Move up'")
         end
@@ -16,7 +48,6 @@ end
 function fl_move_pattern_down()
     local app = hs.appfinder.appFromName("FL Studio")
     if app then
-        -- Tries to select Patterns -> Move down
         if not app:selectMenuItem({ "Patterns", "Move down" }) then
             hs.alert.show("Unable to find 'Patterns > Move down'")
         end
@@ -27,7 +58,7 @@ end
 function fl_remove_edisons()
     local app = hs.appfinder.appFromName("FL Studio")
     if app then
-        app:selectMenuItem({ "Tools", "Macros", "Remove all Edison instances" })
+        app:selectMenuItem({ "Tools", "Remove all Edison instances" })
         hs.alert.show("🧹 Removed all Edisons")
     else
         hs.alert.show("FL Studio not running")
@@ -55,28 +86,28 @@ function flstudio.activateHotkeys()
     end))
 
     -- toggle browser
-    table.insert(flStudioHotkeys, hs.hotkey.bind({ "option" }, "b", function()
+    table.insert(flStudioHotkeys, hs.hotkey.bind({ "option" }, "s", function()
         hs.eventtap.keyStroke({ "option" }, "F8")
     end))
 
     -- piano roll
-    table.insert(flStudioHotkeys, hs.hotkey.bind({ "cmd" }, "r", function()
+    table.insert(flStudioHotkeys, hs.hotkey.bind({ "opt" }, "r", function()
         hs.eventtap.keyStroke({}, "F7")
     end))
 
-    -- channel rack
-    table.insert(flStudioHotkeys, hs.hotkey.bind({ "cmd" }, "c", function()
+    -- channel rack OVERRIDES export wave file
+    table.insert(flStudioHotkeys, hs.hotkey.bind({ "cmd" }, "r", function()
         hs.eventtap.keyStroke({}, "F6")
     end))
     -- option-c == new channel
 
-    -- Playlist
+    -- Playlist OVERRIDES toggle metronome precount
     table.insert(flStudioHotkeys, hs.hotkey.bind({ "cmd" }, "p", function()
         hs.eventtap.keyStroke({}, "F5")
     end))
 
-    -- create new pattern
-    table.insert(flStudioHotkeys, hs.hotkey.bind({ "option" }, "n", function()
+    -- create new pattern OVERRIDES save new version
+    table.insert(flStudioHotkeys, hs.hotkey.bind({ "cmd" }, "n", function()
         hs.eventtap.keyStroke({}, "F4")
     end))
 
@@ -85,20 +116,10 @@ function flstudio.activateHotkeys()
         hs.eventtap.keyStroke({}, "F3")
     end))
 
-    -- tool picker
-    table.insert(flStudioHotkeys, hs.hotkey.bind({ "option" }, "3", function()
-        hs.eventtap.keyStroke({}, "F3")
-    end))
-
-    table.insert(flStudioHotkeys, hs.hotkey.bind({ "option" }, "2", function()
+    -- sample properties
+    table.insert(flStudioHotkeys, hs.hotkey.bind({ "option" }, "s", function()
         hs.eventtap.keyStroke({}, "F2")
     end))
-    -- Move Pattern Up (Option + Up Arrow)
-    table.insert(flStudioHotkeys, hs.hotkey.bind({ "option" }, "up", fl_move_pattern_up))
-
-    -- Move Pattern Down (Option + Down Arrow)
-    table.insert(flStudioHotkeys, hs.hotkey.bind({ "option" }, "down", fl_move_pattern_down))
-
     -- Move Pattern Up (Option + Up Arrow)
     table.insert(flStudioHotkeys, hs.hotkey.bind({ "cmd" }, "[", fl_move_pattern_up))
 
@@ -107,6 +128,9 @@ function flstudio.activateHotkeys()
 
     table.insert(flStudioHotkeys, hs.hotkey.bind({ "option" }, "x", fl_remove_edisons))
 
+    table.insert(flStudioHotkeys, hs.hotkey.bind({ "cmd", "ctrl" }, "e", view_fx_in_use))
+    table.insert(flStudioHotkeys, hs.hotkey.bind({ "cmd", "ctrl" }, "g", view_gen_in_use))
+    table.insert(flStudioHotkeys, hs.hotkey.bind({ "cmd", "ctrl" }, "p", view_patterns))
     -- table.insert(flStudioHotkeys, hs.hotkey.bind({ "option" }, "i", function()
     --     hs.eventtap.keyStroke({ "shift", "cmd" }, "insert")
     -- end))
