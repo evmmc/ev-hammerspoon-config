@@ -67,73 +67,58 @@ end
 
 -- Table to store FL Studio hotkeys
 local flStudioHotkeys = {}
-
--- Function to activate hotkeys when FL Studio is active
 function flstudio.activateHotkeys()
-    -- Settings
-    table.insert(flStudioHotkeys, hs.hotkey.bind({ "cmd" }, ",", function()
-        hs.eventtap.keyStroke({}, "F10")
-    end))
+    -- 1. Define the configuration table
+    -- Format: { {modifiers}, "trigger_key", action }
+    -- Action can be:
+    --    "KEY"       -> Simple keystroke (e.g., "F10")
+    --    {"MOD", "K"}-> Keystroke with modifiers (e.g., {"option", "F8"})
+    --    function    -> A custom function variable
+    local definitions = {
+        -- Settings & Windows
+        { { "cmd" },         ",", "F10" },
+        { { "cmd" },         "m", "F9" },               -- Mixer
+        { { "opt" },         "p", "F8" },               -- Plugin picker
+        { { "opt" },         "s", { "option", "F8" } }, -- Toggle browser
+        { { "opt" },         "r", "F7" },               -- Piano roll
+        { { "cmd" },         "r", "F6" },               -- Channel rack (overrides export)
+        { { "cmd" },         "p", "F5" },               -- Playlist (overrides metronome)
+        { { "cmd" },         "n", "F4" },               -- New pattern (overrides save new version)
+        { { "opt" },         "t", "F3" },               -- Tool picker
 
-    -- Mixer
-    table.insert(flStudioHotkeys, hs.hotkey.bind({ "cmd" }, "m", function()
-        hs.eventtap.keyStroke({}, "F9")
-    end))
+        -- Note: You had "opt+s" listed twice. I commented this one out to avoid conflict.
+        -- { {"opt"}, "s", "F2" },  -- Sample properties
 
-    -- Plugin picker
-    table.insert(flStudioHotkeys, hs.hotkey.bind({ "option" }, "p", function()
-        hs.eventtap.keyStroke({}, "F8")
-    end))
+        -- Custom Functions
+        { { "cmd" },         "[", fl_move_pattern_up },
+        { { "cmd" },         "]", fl_move_pattern_down },
+        { { "opt" },         "x", fl_remove_edisons },
+        { { "cmd", "ctrl" }, "e", view_fx_in_use },
+        { { "cmd", "ctrl" }, "g", view_gen_in_use },
+        { { "cmd", "ctrl" }, "p", view_patterns },
+    }
 
-    -- toggle browser
-    table.insert(flStudioHotkeys, hs.hotkey.bind({ "option" }, "s", function()
-        hs.eventtap.keyStroke({ "option" }, "F8")
-    end))
+    -- 2. Iterate once and insert
+    for _, def in ipairs(definitions) do
+        local mods, key, action = def[1], def[2], def[3]
+        local handler
 
-    -- piano roll
-    table.insert(flStudioHotkeys, hs.hotkey.bind({ "opt" }, "r", function()
-        hs.eventtap.keyStroke({}, "F7")
-    end))
+        -- Determine how to handle the action based on its type
+        if type(action) == "string" then
+            -- Simple Key: F10
+            handler = function() hs.eventtap.keyStroke({}, action) end
+        elseif type(action) == "table" then
+            -- Complex Key: { "option", "F8" }
+            handler = function() hs.eventtap.keyStroke(action[1], action[2]) end
+        elseif type(action) == "function" then
+            -- Custom Function
+            handler = action
+        end
 
-    -- channel rack OVERRIDES export wave file
-    table.insert(flStudioHotkeys, hs.hotkey.bind({ "cmd" }, "r", function()
-        hs.eventtap.keyStroke({}, "F6")
-    end))
-    -- option-c == new channel
-
-    -- Playlist OVERRIDES toggle metronome precount
-    table.insert(flStudioHotkeys, hs.hotkey.bind({ "cmd" }, "p", function()
-        hs.eventtap.keyStroke({}, "F5")
-    end))
-
-    -- create new pattern OVERRIDES save new version
-    table.insert(flStudioHotkeys, hs.hotkey.bind({ "cmd" }, "n", function()
-        hs.eventtap.keyStroke({}, "F4")
-    end))
-
-    -- tool picker
-    table.insert(flStudioHotkeys, hs.hotkey.bind({ "option" }, "t", function()
-        hs.eventtap.keyStroke({}, "F3")
-    end))
-
-    -- sample properties
-    table.insert(flStudioHotkeys, hs.hotkey.bind({ "option" }, "s", function()
-        hs.eventtap.keyStroke({}, "F2")
-    end))
-    -- Move Pattern Up (Option + Up Arrow)
-    table.insert(flStudioHotkeys, hs.hotkey.bind({ "cmd" }, "[", fl_move_pattern_up))
-
-    -- Move Pattern Down (Option + Down Arrow)
-    table.insert(flStudioHotkeys, hs.hotkey.bind({ "cmd" }, "]", fl_move_pattern_down))
-
-    table.insert(flStudioHotkeys, hs.hotkey.bind({ "option" }, "x", fl_remove_edisons))
-
-    table.insert(flStudioHotkeys, hs.hotkey.bind({ "cmd", "ctrl" }, "e", view_fx_in_use))
-    table.insert(flStudioHotkeys, hs.hotkey.bind({ "cmd", "ctrl" }, "g", view_gen_in_use))
-    table.insert(flStudioHotkeys, hs.hotkey.bind({ "cmd", "ctrl" }, "p", view_patterns))
-    -- table.insert(flStudioHotkeys, hs.hotkey.bind({ "option" }, "i", function()
-    --     hs.eventtap.keyStroke({ "shift", "cmd" }, "insert")
-    -- end))
+        if handler then
+            table.insert(flStudioHotkeys, hs.hotkey.bind(mods, key, handler))
+        end
+    end
 end
 
 -- Function to deactivate hotkeys when FL Studio is inactive
@@ -152,25 +137,6 @@ flstudio.watcher = hs.application.watcher.new(function(appName, eventType, app)
         flstudio.deactivateHotkeys()
     end
 end)
-
--- -- Map Option + 1 to 9 → Numpad 1 to 9 (Pattern 1 to 9 in FL Studio)
--- local patternKeys = {
---     ["1"] = "pad1",
---     ["2"] = "pad2",
---     ["3"] = "pad3",
---     ["4"] = "pad4",
---     ["5"] = "pad5",
---     ["6"] = "pad6",
---     ["7"] = "pad7",
---     ["8"] = "pad8",
---     ["9"] = "pad9"
--- }
-
--- for numKey, padKey in pairs(patternKeys) do
---     hs.hotkey.bind({ "option" }, numKey, function()
---         hs.eventtap.keyStroke({}, padKey)
---     end)
--- end
 
 -- Start the watcher
 function flstudio.start()
