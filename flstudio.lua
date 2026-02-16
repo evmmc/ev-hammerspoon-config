@@ -1,6 +1,13 @@
 -- flstudio.lua
 local flstudio = {}
 
+-- Generic function to trigger a key press
+local function pressKey(keyName)
+    return function()
+        hs.eventtap.keyStroke({}, keyName)
+    end
+end
+
 -- view patterns
 function view_patterns()
     local app = hs.appfinder.appFromName("FL Studio")
@@ -75,29 +82,27 @@ function flstudio.activateHotkeys()
     --    {"MOD", "K"}-> Keystroke with modifiers (e.g., {"option", "F8"})
     --    function    -> A custom function variable
     local definitions = {
-        -- Settings & Windows
-        { { "cmd" },         ",", "F10" },
-        { { "cmd" },         "m", "F9" },               -- Mixer
-        { { "opt" },         "p", "F8" },               -- Plugin picker
-        { { "opt" },         "s", { "option", "F8" } }, -- Toggle browser
-        { { "opt" },         "r", "F7" },               -- Piano roll
-        { { "cmd" },         "r", "F6" },               -- Channel rack (overrides export)
-        { { "cmd" },         "p", "F5" },               -- Playlist (overrides metronome)
-        { { "cmd" },         "n", "F4" },               -- New pattern (overrides save new version)
-        { { "opt" },         "t", "F3" },               -- Tool picker
-
-        -- Note: You had "opt+s" listed twice. I commented this one out to avoid conflict.
-        -- { {"opt"}, "s", "F2" },  -- Sample properties
-
-        -- Custom Functions
-        { { "cmd" },         "[", fl_move_pattern_up },
-        { { "cmd" },         "]", fl_move_pattern_down },
-        { { "opt" },         "x", fl_remove_edisons },
-        { { "cmd", "ctrl" }, "e", view_fx_in_use },
-        { { "cmd", "ctrl" }, "g", view_gen_in_use },
-        { { "cmd", "ctrl" }, "p", view_patterns },
+        { { "cmd" },          ",",    "F10" },
+        { { "cmd" },          "m",    "F9" },               -- Mixer
+        { { "option" },       "p",    "F8" },               -- Plugin picker
+        { { "option" },       "s",    { "option", "F8" } }, -- Toggle browser
+        { { "option" },       "r",    "F7" },               -- Piano roll
+        { { "cmd" },          "r",    "F6" },               -- Channel rack (overrides export)
+        { { "cmd" },          "p",    "F5" },               -- Playlist (overrides metronome)
+        { { "cmd" },          "n",    "F4" },               -- New pattern (overrides save new version)
+        { { "option" },       "t",    "F3" },               -- Tool picker
+        { { "ctrl", "option" }, "s",  "F2" },               -- Sample properties
+        { { "cmd" },          "[",    fl_move_pattern_up },
+        { { "cmd" },          "]",    fl_move_pattern_down },
+        { { "option" },       "x",    fl_remove_edisons },
+        { { "cmd", "ctrl" },  "e",    view_fx_in_use },
+        { { "cmd", "ctrl" },  "g",    view_gen_in_use },
+        { { "cmd", "ctrl" },  "p",    view_patterns },
+        { { "cmd", "ctrl" },  "up",   pressKey("pageup") },
+        { { "cmd", "ctrl" },  "down", pressKey("pagedown") },
+        { { "cmd", "shift" }, "up",   pressKey("home") },
+        { { "cmd", "shift" }, "down", pressKey("end") }
     }
-
     -- 2. Iterate once and insert
     for _, def in ipairs(definitions) do
         local mods, key, action = def[1], def[2], def[3]
