@@ -1,10 +1,12 @@
 -- flstudio.lua
 local flstudio = {}
 
+-- In your table:
+-- { { "cmd", "ctrl" }, "left", pressPad0() },
 -- Generic function to trigger a key press
 local function pressKey(keyName)
     return function()
-        hs.eventtap.keyStroke({}, keyName)
+        hs.eventtap.keyStroke({}, keyName, 1000)
     end
 end
 
@@ -82,26 +84,26 @@ function flstudio.activateHotkeys()
     --    {"MOD", "K"}-> Keystroke with modifiers (e.g., {"option", "F8"})
     --    function    -> A custom function variable
     local definitions = {
-        { { "cmd" },          ",",    "F10" },
-        { { "cmd" },          "m",    "F9" },               -- Mixer
-        { { "option" },       "p",    "F8" },               -- Plugin picker
-        { { "option" },       "s",    { "option", "F8" } }, -- Toggle browser
-        { { "option" },       "r",    "F7" },               -- Piano roll
-        { { "cmd" },          "r",    "F6" },               -- Channel rack (overrides export)
-        { { "cmd" },          "p",    "F5" },               -- Playlist (overrides metronome)
-        { { "cmd" },          "n",    "F4" },               -- New pattern (overrides save new version)
-        { { "option" },       "t",    "F3" },               -- Tool picker
-        { { "ctrl", "option" }, "s",  "F2" },               -- Sample properties
-        { { "cmd" },          "[",    fl_move_pattern_up },
-        { { "cmd" },          "]",    fl_move_pattern_down },
-        { { "option" },       "x",    fl_remove_edisons },
-        { { "cmd", "ctrl" },  "e",    view_fx_in_use },
-        { { "cmd", "ctrl" },  "g",    view_gen_in_use },
-        { { "cmd", "ctrl" },  "p",    view_patterns },
-        { { "cmd", "ctrl" },  "up",   pressKey("pageup") },
-        { { "cmd", "ctrl" },  "down", pressKey("pagedown") },
-        { { "cmd", "shift" }, "up",   pressKey("home") },
-        { { "cmd", "shift" }, "down", pressKey("end") }
+        { { "cmd" },            ",",     "F10" },
+        { { "cmd" },            "m",     "F9" },               -- Mixer
+        { { "option" },         "p",     "F8" },               -- Plugin picker
+        { { "option" },         "s",     { "option", "F8" } }, -- Toggle browser
+        { { "option" },         "r",     "F7" },               -- Piano roll
+        { { "cmd" },            "r",     "F6" },               -- Channel rack (overrides export)
+        { { "cmd" },            "p",     "F5" },               -- Playlist (overrides metronome)
+        { { "cmd" },            "n",     "F4" },               -- New pattern (overrides save new version)
+        { { "option" },         "t",     "F3" },               -- Tool picker
+        { { "ctrl", "option" }, "s",     "F2" },               -- Sample properties
+        { { "cmd" },            "[",     fl_move_pattern_up },
+        { { "cmd" },            "]",     fl_move_pattern_down },
+        { { "option" },         "x",     fl_remove_edisons },
+        { { "cmd", "ctrl" },    "e",     view_fx_in_use },
+        { { "cmd", "ctrl" },    "g",     view_gen_in_use },
+        { { "cmd", "ctrl" },    "p",     view_patterns },
+        { { "cmd", "ctrl" },    "up",    pressKey("pageup") },
+        { { "cmd", "ctrl" },    "down",  pressKey("pagedown") },
+        { { "cmd", "ctrl" },    "left",  pressKey("pad0") },
+        { { "cmd", "ctrl" },    "right", pressKey("pad.") }
     }
     -- 2. Iterate once and insert
     for _, def in ipairs(definitions) do
