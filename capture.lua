@@ -7,7 +7,7 @@ local function appendEntryToOrgFile(heading, body, tag, orgfile, orgdir)
     local filename = orgfile or "capture.org"
     local dir = orgdir or "org"
     local timestamp = os.date("%Y-%m-%d %H:%M:%S")
-    
+
     -- Build Org entry
     local orgEntry = string.format(
         "* %s\n:PROPERTIES:\n:CREATED: [%s]\n:TAGS: %s\n:END:\n\n%s\n\n",
@@ -31,7 +31,7 @@ end
 -- 1. Original Function: Capture selected text into Org file
 function captureTextToOrg(orgfile, orgdir)
     -- Step 1: simulate Cmd+C to copy the selected text
-    hs.eventtap.keyStroke({"cmd"}, "c", 0)
+    hs.eventtap.keyStroke({ "cmd" }, "c", 0)
 
     -- small delay to allow clipboard update
     hs.timer.doAfter(0.15, function()
@@ -57,27 +57,26 @@ function captureTextToOrg(orgfile, orgdir)
 end
 
 -- 2. New Function: Quick Win Dialog
-function captureQuickWin(orgfile, orgdir)
+function captureQuickNote(orgfile, orgdir)
     -- Opens a native macOS text prompt dialog
     -- button is "OK" or "Cancel", text is what you wrote
     local button, text = hs.dialog.textPrompt("Quick Win", "What did you achieve?")
 
     if button == "OK" and text and text ~= "" then
-        -- For a Quick Win, the Heading is the text itself. 
+        -- For a Quick Win, the Heading is the text itself.
         -- We leave the body empty (or you could duplicate the text if you prefer)
         local heading = text
         local tag = ":quick_win:"
-        local body = "" 
+        local body = ""
 
         -- Call the helper to save
         appendEntryToOrgFile(heading, body, tag, orgfile, orgdir)
     end
 end
 
-
 -- Existing bindings
-hs.hotkey.bind({"ctrl", "cmd"}, "9", captureTextToOrg)
-hs.hotkey.bind({"ctrl"}, "§", captureTextToOrg)
+hs.hotkey.bind({ "ctrl", "cmd" }, "9", captureTextToOrg)
+hs.hotkey.bind({ "ctrl" }, "§", captureTextToOrg)
 
 -- New binding for Quick Win (Example: Ctrl + Cmd + 0)
-hs.hotkey.bind({"option", "cmd"}, "c", captureQuickWin)
+hs.hotkey.bind({ "option", "cmd" }, "c", captureQuickNote)

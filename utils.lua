@@ -26,6 +26,48 @@ hs.application.watcher.new(function(appName, eventType, app)
 end):start()
 
 -- Toggle Hammerspoon Console with Cmd + Option + Y
-hs.hotkey.bind({ "cmd", "option" }, "5", function()
+hs.hotkey.bind({ "cmd", "option", "control" }, "h", function()
     hs.toggleConsole()
 end)
+
+
+
+function showActiveBindings()
+    local activeHotkeys = hs.hotkey.getHotkeys()
+    local choices = {}
+
+    for _, hk in ipairs(activeHotkeys) do
+        -- Only show bindings that are currently enabled
+        if hk.enabled then
+            local shortcut = hk.idx or "Unknown binding"
+            local description = hk.msg or "No description"
+
+            -- Hammerspoon defaults the message to the keystroke if left blank.
+            -- This cleans up the UI for unlabeled bindings.
+            if description == shortcut then
+                description = "Unlabeled Binding"
+            end
+
+            table.insert(choices, {
+                text = shortcut,
+                subText = description
+            })
+        end
+    end
+
+    -- Create the chooser
+    local chooser = hs.chooser.new(function(choice)
+        -- We just want to view them, so we do nothing on selection
+        -- (Though you could theoretically trigger the hotkey from here if you wanted!)
+    end)
+
+    chooser:choices(choices)
+    chooser:placeholderText("Active Hammerspoon Bindings (Type to search...)")
+
+    -- Display the searchable list
+    chooser:show()
+end
+
+hs.hotkey.bind({ "cmd", "option", "ctrl" }, "`", "Show Active Bindings", showActiveBindings)
+
+-- hs.hotkey.showHotkeys({ "cmd", "option", "ctrl" }, "`")
