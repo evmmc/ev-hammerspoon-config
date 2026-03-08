@@ -1,8 +1,5 @@
 -- appdial.lua
 
-hs.loadSpoon("LeftRightHotkey")
-spoon.LeftRightHotkey:start()
-
 local function toggleApp(appName)
     local app = hs.application.find(appName)
 
@@ -29,7 +26,7 @@ local appList = {
 }
 
 for i, appName in ipairs(appList) do
-    spoon.LeftRightHotkey:bind({ "rCmd" }, tostring(i), function()
+    hs.hotkey.bind({ "option" }, tostring(i), function()
         toggleApp(appName)
     end)
 end

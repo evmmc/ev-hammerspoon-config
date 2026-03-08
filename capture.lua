@@ -79,4 +79,4 @@ hs.hotkey.bind({ "ctrl", "cmd" }, "9", captureTextToOrg)
 hs.hotkey.bind({ "ctrl" }, "§", captureTextToOrg)
 
 -- New binding for Quick Win (Example: Ctrl + Cmd + 0)
-hs.hotkey.bind({ "option", "cmd" }, "c", captureQuickNote)
+hs.hotkey.bind({ "option", "cmd" }, "`", captureQuickNote)
