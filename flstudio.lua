@@ -91,7 +91,7 @@ function flstudio.activateHotkeys()
         { { "option" },         "r",     "F7" },               -- Piano roll
         { { "cmd" },            "r",     "F6" },               -- Channel rack (overrides export)
         { { "cmd" },            "p",     "F5" },               -- Playlist (overrides metronome)
-        { { "cmd" },            "n",     "F4" },               -- New pattern (overrides save new version)
+        { { "cmd", "option" },  "n",     "F4" },               -- New pattern (overrides save new version)
         { { "option" },         "t",     "F3" },               -- Tool picker
         { { "ctrl", "option" }, "s",     "F2" },               -- Sample properties
         { { "cmd" },            "[",     fl_move_pattern_up },
